@@ -1,14 +1,14 @@
 package com.example.wengelef.rxfileutils;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v7.app.AppCompatActivity;
 
 import com.example.wengelef.library.RxFileUtils;
 
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -23,17 +23,17 @@ public class MainActivity extends AppCompatActivity {
                 .subscribe(new Observer<String>() {
                     @Override
                     public void onCompleted() {
-                        Log.d("MainActivity", "onCompleted()");
+                        Timber.d("onCompleted()");
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        Log.e("MainActivity", "onError()", e);
+                        Timber.e(e, "onError()");
                     }
 
                     @Override
                     public void onNext(String s) {
-                        Log.d("MainActivity", "onNext(" + s.trim() + ")");
+                        Timber.i("onNext(%s)", s.trim());
                     }
                 });
     }
