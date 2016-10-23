@@ -70,7 +70,7 @@ public class RxFileUtils {
         return Observable.create(new Observable.OnSubscribe<Void>() {
             @Override
             public void call(Subscriber<? super Void> subscriber) {
-                FileOutputStream outputStream;
+                FileOutputStream outputStream = null;
                 try {
                     outputStream = context.openFileOutput(filename, Context.MODE_PRIVATE);
                     outputStream.write(content.getBytes());
@@ -82,9 +82,5 @@ public class RxFileUtils {
                 }
             }
         });
-    }
-
-    public static Observable writeExternal(final Context context, final String content) {
-        return Observable.empty();
     }
 }
