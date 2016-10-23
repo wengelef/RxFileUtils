@@ -2,6 +2,8 @@ package com.example.wengelef.rxfileutils;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.method.ScrollingMovementMethod;
+import android.widget.TextView;
 
 import com.example.wengelef.library.RxFileUtils;
 
@@ -16,6 +18,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        final TextView textView = (TextView )findViewById(R.id.textview);
+        textView.setText("Processing file...");
+
+        textView.setMovementMethod(new ScrollingMovementMethod());
 
         RxFileUtils.readFileFromAsset(this, "hello_world.txt")
                 .observeOn(AndroidSchedulers.mainThread())
@@ -34,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onNext(String s) {
                         Timber.i("onNext(%s)", s.trim());
+                        textView.setText(s);
                     }
                 });
     }
