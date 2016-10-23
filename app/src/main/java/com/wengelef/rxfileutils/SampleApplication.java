@@ -1,4 +1,4 @@
-package com.example.wengelef.rxfileutils;
+package com.wengelef.rxfileutils;
 
 import android.app.Application;
 

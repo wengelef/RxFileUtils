@@ -1,9 +1,7 @@
-package com.example.wengelef.library;
+package com.wengelef;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.IOException;

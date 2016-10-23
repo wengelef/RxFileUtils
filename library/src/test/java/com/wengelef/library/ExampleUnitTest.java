@@ -1,4 +1,4 @@
-package com.example.wengelef.library;
+package com.wengelef.library;
 
 import org.junit.Test;
 

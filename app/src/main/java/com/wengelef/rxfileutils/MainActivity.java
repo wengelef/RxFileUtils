@@ -1,11 +1,11 @@
-package com.example.wengelef.rxfileutils;
+package com.wengelef.rxfileutils;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.method.ScrollingMovementMethod;
 import android.widget.TextView;
 
-import com.example.wengelef.library.RxFileUtils;
+import com.wengelef.RxFileUtils;
 
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
