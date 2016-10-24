@@ -7,26 +7,26 @@ Collection of Utility for the Android File System
 ##### Read File from `assets/` Folder:
 
 ```java
-        RxFileUtils.readFileFromAsset(this, "hello_world.txt")
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.computation())
-                .subscribe(new Observer<String>() {
-                    @Override
-                    public void onCompleted() {
-                        Timber.d("onCompleted()");
-                    }
+RxFileUtils.readFileFromAsset(this, "hello_world.txt")
+    .observeOn(AndroidSchedulers.mainThread())
+    .subscribeOn(Schedulers.computation())
+    .subscribe(new Observer<String>() {
+        @Override
+        public void onCompleted() {
+            Timber.d("onCompleted()");
+        }
 
-                    @Override
-                    public void onError(Throwable e) {
-                        Timber.e(e, "onError()");
-                    }
+        @Override
+        public void onError(Throwable e) {
+            Timber.e(e, "onError()");
+        }
 
-                    @Override
-                    public void onNext(String s) {
-                        //Timber.i("onNext(%s)", s.trim());
-                        textView.setText(s);
-                    }
-                });
+        @Override
+        public void onNext(String s) {
+            //Timber.i("onNext(%s)", s.trim());
+            textView.setText(s);
+        }
+    });
 
 ```
 
@@ -34,48 +34,48 @@ Collection of Utility for the Android File System
 
 ```java
 RxFileUtils.writeInternal(this, "hello_test.txt", "test test test")
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe(new Observer<Void>() {
-                    @Override
-                    public void onCompleted() {
-                        Timber.i("Write internal complete");
-                    }
+    .observeOn(AndroidSchedulers.mainThread())
+    .subscribeOn(Schedulers.io())
+    .subscribe(new Observer<Void>() {
+        @Override
+        public void onCompleted() {
+            Timber.i("Write internal complete");
+        }
 
-                    @Override
-                    public void onError(Throwable e) {
-                        Timber.e(e, "onError");
-                    }
+        @Override
+        public void onError(Throwable e) {
+            Timber.e(e, "onError");
+        }
 
-                    @Override
-                    public void onNext(Object o) {
-                        Timber.i("Write internal complete");
-                    }
-                });
+        @Override
+        public void onNext(Object o) {
+            Timber.i("Write internal complete");
+        }
+    });
 ```
 
 ##### Read from Internal storage:
 
 ```java
 RxFileUtils.readInternal(this, "hello_test.txt")
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe(new Observer<String>() {
-                    @Override
-                    public void onCompleted() {
-                        Timber.i("onCompleted");
-                    }
+    .observeOn(AndroidSchedulers.mainThread())
+    .subscribeOn(Schedulers.io())
+    .subscribe(new Observer<String>() {
+        @Override
+        public void onCompleted() {
+            Timber.i("onCompleted");
+        }
 
-                    @Override
-                    public void onError(Throwable e) {
-                        Timber.e(e, "onError");
-                    }
+        @Override
+        public void onError(Throwable e) {
+            Timber.e(e, "onError");
+        }
 
-                    @Override
-                    public void onNext(String s) {
-                        Timber.i("Internal File onNext(%s)", s);
-                    }
-                });
+        @Override
+        public void onNext(String s) {
+            Timber.i("Internal File onNext(%s)", s);
+        }
+    });
 ```
 
 ## Download
