@@ -84,15 +84,15 @@ RxFileUtils.readInternal(this, "hello_test.txt")
 
 ```java
 allprojects {
-	repositories {
-		maven { url "https://jitpack.io" }
-	}
+    repositories {
+        maven { url "https://jitpack.io" }
+    }
 }
 ```
 
 ```java
 dependencies {
-	        compile 'com.github.wengelef:RxFileUtils:1.1.1'
+    compile 'com.github.wengelef:RxFileUtils:1.1.1'
 }
 ```
 
