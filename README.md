@@ -78,6 +78,23 @@ RxFileUtils.readInternal(this, "hello_test.txt")
                 });
 ```
 
+## Download
+
+##### Gradle:
+
+```java
+allprojects {
+	repositories {
+		maven { url "https://jitpack.io" }
+	}
+}
+```
+
+```java
+dependencies {
+	        compile 'com.github.wengelef:RxFileUtils:1.1.1'
+}
+```
 
 ## License
 
