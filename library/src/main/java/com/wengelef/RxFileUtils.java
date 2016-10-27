@@ -21,6 +21,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -155,6 +156,33 @@ public class RxFileUtils {
                     subscriber.onCompleted();
                 } catch (IOException e) {
                     subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    public static Observable<Void> deleteInternal(@Nullable final Context context, final String filename) {
+        return Observable.create(new Observable.OnSubscribe<Void>() {
+            @Override
+            public void call(Subscriber<? super Void> subscriber) {
+                if (context == null) {
+                    subscriber.onError(new IllegalArgumentException("Context must not be null"));
+                    return;
+                }
+                if (filename == null) {
+                    subscriber.onError(new IllegalArgumentException("Filename must not be null"));
+                    return;
+                }
+
+                File directory = context.getFilesDir();
+                File file = new File(directory, filename);
+                boolean deleted = file.delete();
+
+                if (deleted) {
+                    subscriber.onNext(null);
+                    subscriber.onCompleted();
+                } else {
+                    subscriber.onError(new FileNotFoundException());
                 }
             }
         });
