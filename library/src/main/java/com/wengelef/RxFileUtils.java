@@ -21,6 +21,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -49,25 +50,30 @@ public class RxFileUtils {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
-                if (context != null) {
-                    InputStream input = null;
-                    try {
-                        input = context.getAssets().open(filename);
-
-                        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(input));
-                        StringBuilder content = new StringBuilder(input.available());
-                        String line;
-                        while ((line = bufferedReader.readLine()) != null) {
-                            content.append(line);
-                            content.append(System.getProperty("line.separator"));
-                        }
-                        subscriber.onNext(content.toString());
-                        subscriber.onCompleted();
-                    } catch (IOException e) {
-                        subscriber.onError(e);
-                    }
-                } else {
+                if (context == null) {
                     subscriber.onError(new IllegalArgumentException("Context must not be null"));
+                    return;
+                }
+                if (filename == null) {
+                    subscriber.onError(new IllegalArgumentException("Filename must not be null"));
+                    return;
+                }
+
+                InputStream input = null;
+                try {
+                    input = context.getAssets().open(filename);
+
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(input));
+                    StringBuilder content = new StringBuilder(input.available());
+                    String line;
+                    while ((line = bufferedReader.readLine()) != null) {
+                        content.append(line);
+                        content.append(System.getProperty("line.separator"));
+                    }
+                    subscriber.onNext(content.toString());
+                    subscriber.onCompleted();
+                } catch (IOException e) {
+                    subscriber.onError(e);
                 }
             }
         });
@@ -86,24 +92,29 @@ public class RxFileUtils {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
-                if (context != null) {
-                    FileInputStream fis = null;
-                    try {
-                        fis = context.openFileInput(filename);
-                        InputStreamReader isr = new InputStreamReader(fis);
-                        BufferedReader bufferedReader = new BufferedReader(isr);
-                        StringBuilder content = new StringBuilder();
-                        String line;
-                        while ((line = bufferedReader.readLine()) != null) {
-                            content.append(line);
-                        }
-                        subscriber.onNext(content.toString());
-                        subscriber.onCompleted();
-                    } catch (IOException e) {
-                        subscriber.onError(e);
-                    }
-                } else {
+                if (context == null) {
                     subscriber.onError(new IllegalArgumentException("Context must not be null"));
+                    return;
+                }
+                if (filename == null) {
+                    subscriber.onError(new IllegalArgumentException("Filename must not be null"));
+                    return;
+                }
+
+                FileInputStream fis = null;
+                try {
+                    fis = context.openFileInput(filename);
+                    InputStreamReader isr = new InputStreamReader(fis);
+                    BufferedReader bufferedReader = new BufferedReader(isr);
+                    StringBuilder content = new StringBuilder();
+                    String line;
+                    while ((line = bufferedReader.readLine()) != null) {
+                        content.append(line);
+                    }
+                    subscriber.onNext(content.toString());
+                    subscriber.onCompleted();
+                } catch (IOException e) {
+                    subscriber.onError(e);
                 }
             }
         });
@@ -123,19 +134,63 @@ public class RxFileUtils {
         return Observable.create(new Observable.OnSubscribe<Void>() {
             @Override
             public void call(Subscriber<? super Void> subscriber) {
-                if (context != null) {
-                    FileOutputStream outputStream = null;
-                    try {
-                        outputStream = context.openFileOutput(filename, Context.MODE_PRIVATE);
-                        outputStream.write(content.getBytes());
-                        outputStream.close();
-                        subscriber.onNext(null);
-                        subscriber.onCompleted();
-                    } catch (IOException e) {
-                        subscriber.onError(e);
-                    }
-                } else {
+                if (context == null) {
                     subscriber.onError(new IllegalArgumentException("Context must not be null"));
+                    return;
+                }
+                if (filename == null) {
+                    subscriber.onError(new IllegalArgumentException("Filename must not be null"));
+                    return;
+                }
+                if (content == null) {
+                    subscriber.onError(new IllegalArgumentException("Content must not be null"));
+                    return;
+                }
+
+                FileOutputStream outputStream = null;
+                try {
+                    outputStream = context.openFileOutput(filename, Context.MODE_PRIVATE);
+                    outputStream.write(content.getBytes());
+                    outputStream.close();
+                    subscriber.onNext(null);
+                    subscriber.onCompleted();
+                } catch (IOException e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    /**
+     * Delete File from internal Storage
+     *
+     * @param context  Context, not null
+     * @param filename  Filename of the File that will be deleted
+     * @return <code>Observable<Void></code> that emits <code>onNext()</code> and <code>onCompleted()</code> when the File is deleted.
+     *         <code>onError()</code> is emitted if the given Context is null, filename is null or File is not deleted.
+     */
+    public static Observable<Void> deleteInternal(@Nullable final Context context, final String filename) {
+        return Observable.create(new Observable.OnSubscribe<Void>() {
+            @Override
+            public void call(Subscriber<? super Void> subscriber) {
+                if (context == null) {
+                    subscriber.onError(new IllegalArgumentException("Context must not be null"));
+                    return;
+                }
+                if (filename == null) {
+                    subscriber.onError(new IllegalArgumentException("Filename must not be null"));
+                    return;
+                }
+
+                File directory = context.getFilesDir();
+                File file = new File(directory, filename);
+                boolean deleted = file.delete();
+
+                if (deleted) {
+                    subscriber.onNext(null);
+                    subscriber.onCompleted();
+                } else {
+                    subscriber.onError(new FileNotFoundException());
                 }
             }
         });
