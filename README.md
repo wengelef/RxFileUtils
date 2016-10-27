@@ -7,7 +7,7 @@ Collection of Utility for the Android File System
 ##### Read File from `assets/` Folder:
 
 ```java
-RxFileUtils.readFileFromAsset(this, "hello_world.txt")
+RxFileUtils.readFileFromAsset(context, "hello_world.txt")
     .observeOn(AndroidSchedulers.mainThread())
     .subscribeOn(Schedulers.computation())
     .subscribe(new Observer<String>() {
@@ -33,7 +33,7 @@ RxFileUtils.readFileFromAsset(this, "hello_world.txt")
 ##### Write to Internal storage:
 
 ```java
-RxFileUtils.writeInternal(this, "hello_test.txt", "test test test")
+RxFileUtils.writeInternal(context, "hello_test.txt", "test test test")
     .observeOn(AndroidSchedulers.mainThread())
     .subscribeOn(Schedulers.io())
     .subscribe(new Observer<Void>() {
@@ -57,7 +57,7 @@ RxFileUtils.writeInternal(this, "hello_test.txt", "test test test")
 ##### Read from Internal storage:
 
 ```java
-RxFileUtils.readInternal(this, "hello_test.txt")
+RxFileUtils.readInternal(context, "hello_test.txt")
     .observeOn(AndroidSchedulers.mainThread())
     .subscribeOn(Schedulers.io())
     .subscribe(new Observer<String>() {
@@ -74,6 +74,30 @@ RxFileUtils.readInternal(this, "hello_test.txt")
         @Override
         public void onNext(String s) {
             Timber.i("Internal File onNext(%s)", s);
+        }
+    });
+```
+
+##### Delete from Internal storage:
+
+```java
+RxFileUtils.deleteInternal(context, "hello_test.txt")
+    .observeOn(AndroidSchedulers.mainThread())
+    .subscribeOn(Schedulers.io())
+    .subscribe(new Observer<Void>() {
+        @Override
+        public void onCompleted() {
+            Timber.i("onCompleted");
+        }
+
+        @Override
+        public void onError(Throwable e) {
+            Timber.e(e, "onError");
+        }
+
+        @Override
+        public void onNext(Void aVoid) {
+            Timber.i("File deleted");
         }
     });
 ```

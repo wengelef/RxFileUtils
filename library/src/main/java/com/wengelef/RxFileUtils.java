@@ -161,6 +161,14 @@ public class RxFileUtils {
         });
     }
 
+    /**
+     * Delete File from internal Storage
+     *
+     * @param context  Context, not null
+     * @param filename  Filename of the File that will be deleted
+     * @return <code>Observable<Void></code> that emits <code>onNext()</code> and <code>onCompleted()</code> when the File is deleted.
+     *         <code>onError()</code> is emitted if the given Context is null, filename is null or File is not deleted.
+     */
     public static Observable<Void> deleteInternal(@Nullable final Context context, final String filename) {
         return Observable.create(new Observable.OnSubscribe<Void>() {
             @Override
