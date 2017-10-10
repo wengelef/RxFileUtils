@@ -7,12 +7,14 @@ import android.widget.TextView;
 
 import com.wengelef.RxFileUtils;
 
-import rx.Observable;
-import rx.Observer;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Func1;
-import rx.schedulers.Schedulers;
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Action;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity {
@@ -22,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        final TextView textView = (TextView )findViewById(R.id.textview);
+        final TextView textView = findViewById(R.id.textview);
         textView.setText("Processing file...");
 
         textView.setMovementMethod(new ScrollingMovementMethod());
@@ -30,50 +32,58 @@ public class MainActivity extends AppCompatActivity {
         RxFileUtils.writeInternal(this, "hello_test.txt", "test test test")
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
-                .flatMap(new Func1<Void, Observable<String>>() {
+                .toObservable()
+                .flatMap(new Function<Object, ObservableSource<String>>() {
                     @Override
-                    public Observable<String> call(Void aVoid) {
+                    public ObservableSource<String> apply(Object o) throws Exception {
                         Timber.i("internal File written");
                         return RxFileUtils.readInternal(MainActivity.this, "hello_test.txt")
                                 .subscribeOn(Schedulers.io());
                     }
                 })
-                .subscribe(new Observer<String>() {
-                    @Override
-                    public void onCompleted() {
-                        Timber.i("onCompleted");
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Timber.e(e, "onError");
-                    }
-
-                    @Override
-                    public void onNext(String s) {
-                        Timber.i("internal onNext(%s)", s);
-                    }
-                });
+                .subscribe(
+                        new Consumer<String>() {
+                            @Override
+                            public void accept(String s) throws Exception {
+                                Timber.i("internal onNext(%s)", s);
+                            }
+                        },
+                        new Consumer<Throwable>() {
+                            @Override
+                            public void accept(Throwable throwable) throws Exception {
+                                Timber.e(throwable, "onError");
+                            }
+                        },
+                        new Action() {
+                            @Override
+                            public void run() throws Exception {
+                                Timber.i("onCompleted");
+                            }
+                        }
+                );
 
         RxFileUtils.readFileFromAsset(this, "hello_world.txt")
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.computation())
-                .subscribe(new Observer<String>() {
-                    @Override
-                    public void onCompleted() {
-                        Timber.d("onCompleted()");
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Timber.e(e, "onError()");
-                    }
-
-                    @Override
-                    public void onNext(String s) {
-                        //Timber.i("onNext(%s)", s.trim());
-                        textView.setText(s);
-                    }
-                });
+                .subscribe(
+                        new Consumer<String>() {
+                            @Override
+                            public void accept(String s) throws Exception {
+                                textView.setText(s);
+                            }
+                        },
+                        new Consumer<Throwable>() {
+                            @Override
+                            public void accept(Throwable throwable) throws Exception {
+                                Timber.e(throwable, "onError");
+                            }
+                        },
+                        new Action() {
+                            @Override
+                            public void run() throws Exception {
+                                Timber.i("onCompleted");
+                            }
+                        }
+                );
     }
 }
