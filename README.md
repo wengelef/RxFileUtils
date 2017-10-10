@@ -116,7 +116,7 @@ allprojects {
 
 ```java
 dependencies {
-    compile 'com.github.wengelef:RxFileUtils:1.1.1'
+    compile 'com.github.wengelef:RxFileUtils:2.0.0'
 }
 ```
 
@@ -135,7 +135,7 @@ dependencies {
 <dependency>
     <groupId>com.github.wengelef</groupId>
     <artifactId>RxFileUtils</artifactId>
-    <version>1.1.1</version>
+    <version>2.0.0</version>
 </dependency>
 ```
 
