@@ -29,8 +29,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import rx.Observable;
-import rx.Subscriber;
+import io.reactivex.Completable;
+import io.reactivex.CompletableEmitter;
+import io.reactivex.CompletableOnSubscribe;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
 
 /**
  * Collection of Utility for the Android File System
@@ -47,15 +51,15 @@ public class RxFileUtils {
      */
     @NonNull
     public static Observable<String> readFileFromAsset(@Nullable final Context context, final String filename) {
-        return Observable.create(new Observable.OnSubscribe<String>() {
+        return Observable.create(new ObservableOnSubscribe<String>() {
             @Override
-            public void call(Subscriber<? super String> subscriber) {
+            public void subscribe(ObservableEmitter<String> emitter) throws Exception {
                 if (context == null) {
-                    subscriber.onError(new IllegalArgumentException("Context must not be null"));
+                    emitter.onError(new IllegalArgumentException("Context must not be null"));
                     return;
                 }
                 if (filename == null) {
-                    subscriber.onError(new IllegalArgumentException("Filename must not be null"));
+                    emitter.onError(new IllegalArgumentException("Filename must not be null"));
                     return;
                 }
 
@@ -70,10 +74,10 @@ public class RxFileUtils {
                         content.append(line);
                         content.append(System.getProperty("line.separator"));
                     }
-                    subscriber.onNext(content.toString());
-                    subscriber.onCompleted();
+                    emitter.onNext(content.toString());
+                    emitter.onComplete();
                 } catch (IOException e) {
-                    subscriber.onError(e);
+                    emitter.onError(e);
                 }
             }
         });
@@ -89,15 +93,15 @@ public class RxFileUtils {
      */
     @NonNull
     public static Observable<String> readInternal(@Nullable final Context context, final String filename) {
-        return Observable.create(new Observable.OnSubscribe<String>() {
+        return Observable.create(new ObservableOnSubscribe<String>() {
             @Override
-            public void call(Subscriber<? super String> subscriber) {
+            public void subscribe(ObservableEmitter<String> emitter) throws Exception {
                 if (context == null) {
-                    subscriber.onError(new IllegalArgumentException("Context must not be null"));
+                    emitter.onError(new IllegalArgumentException("Context must not be null"));
                     return;
                 }
                 if (filename == null) {
-                    subscriber.onError(new IllegalArgumentException("Filename must not be null"));
+                    emitter.onError(new IllegalArgumentException("Filename must not be null"));
                     return;
                 }
 
@@ -111,10 +115,10 @@ public class RxFileUtils {
                     while ((line = bufferedReader.readLine()) != null) {
                         content.append(line);
                     }
-                    subscriber.onNext(content.toString());
-                    subscriber.onCompleted();
+                    emitter.onNext(content.toString());
+                    emitter.onComplete();
                 } catch (IOException e) {
-                    subscriber.onError(e);
+                    emitter.onError(e);
                 }
             }
         });
@@ -126,24 +130,24 @@ public class RxFileUtils {
      * @param context  Context, not null
      * @param filename  Filename of the File that will be saved
      * @param content  Content to write into the File
-     * @return <code>Observable<Void></code> that emits <code>onNext()</code> and <code>onCompleted()</code> when the File is saved.
+     * @return <code>Observable<Void></code> that completes with <code>onComplete()</code> when the File is saved.
      *         <code>onError()</code> is emitted if the given Context is null or File operation meets an <code>IOException</code>
      */
     @NonNull
-    public static Observable<Void> writeInternal(@Nullable final Context context, final String filename, final String content) {
-        return Observable.create(new Observable.OnSubscribe<Void>() {
+    public static Completable writeInternal(@Nullable final Context context, final String filename, final String content) {
+        return Completable.create(new CompletableOnSubscribe() {
             @Override
-            public void call(Subscriber<? super Void> subscriber) {
+            public void subscribe(CompletableEmitter emitter) throws Exception {
                 if (context == null) {
-                    subscriber.onError(new IllegalArgumentException("Context must not be null"));
+                    emitter.onError(new IllegalArgumentException("Context must not be null"));
                     return;
                 }
                 if (filename == null) {
-                    subscriber.onError(new IllegalArgumentException("Filename must not be null"));
+                    emitter.onError(new IllegalArgumentException("Filename must not be null"));
                     return;
                 }
                 if (content == null) {
-                    subscriber.onError(new IllegalArgumentException("Content must not be null"));
+                    emitter.onError(new IllegalArgumentException("Content must not be null"));
                     return;
                 }
 
@@ -152,10 +156,9 @@ public class RxFileUtils {
                     outputStream = context.openFileOutput(filename, Context.MODE_PRIVATE);
                     outputStream.write(content.getBytes());
                     outputStream.close();
-                    subscriber.onNext(null);
-                    subscriber.onCompleted();
+                    emitter.onComplete();
                 } catch (IOException e) {
-                    subscriber.onError(e);
+                    emitter.onError(e);
                 }
             }
         });
@@ -166,19 +169,19 @@ public class RxFileUtils {
      *
      * @param context  Context, not null
      * @param filename  Filename of the File that will be deleted
-     * @return <code>Observable<Void></code> that emits <code>onNext()</code> and <code>onCompleted()</code> when the File is deleted.
+     * @return <code>Completable</code> that completes with <code>onComplete()</code> when the File is deleted.
      *         <code>onError()</code> is emitted if the given Context is null, filename is null or File is not deleted.
      */
-    public static Observable<Void> deleteInternal(@Nullable final Context context, final String filename) {
-        return Observable.create(new Observable.OnSubscribe<Void>() {
+    public static Completable deleteInternal(@Nullable final Context context, final String filename) {
+        return Completable.create(new CompletableOnSubscribe() {
             @Override
-            public void call(Subscriber<? super Void> subscriber) {
+            public void subscribe(CompletableEmitter emitter) throws Exception {
                 if (context == null) {
-                    subscriber.onError(new IllegalArgumentException("Context must not be null"));
+                    emitter.onError(new IllegalArgumentException("Context must not be null"));
                     return;
                 }
                 if (filename == null) {
-                    subscriber.onError(new IllegalArgumentException("Filename must not be null"));
+                    emitter.onError(new IllegalArgumentException("Filename must not be null"));
                     return;
                 }
 
@@ -187,10 +190,9 @@ public class RxFileUtils {
                 boolean deleted = file.delete();
 
                 if (deleted) {
-                    subscriber.onNext(null);
-                    subscriber.onCompleted();
+                    emitter.onComplete();
                 } else {
-                    subscriber.onError(new FileNotFoundException());
+                    emitter.onError(new FileNotFoundException());
                 }
             }
         });
